@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/scan"
+        android:icon="@drawable/ic_bluetooth_off"
+        android:title="@string/connect" />
+    <item
+        android:id="@+id/power"
+        android:icon="@drawable/power_off"
+        android:title="@string/power_off" />
+    <item
+        android:id="@+id/helpme"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="@string/helpme" />
+</menu>
