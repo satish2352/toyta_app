@@ -166,6 +166,16 @@ public class SplashActivity extends AppCompatActivity {
                 //finish();
             }
         }
+        for (int i = 0; i < grantResults.length; i++) {
+            if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                // Check if permission is denied permanently
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
+                    redirectToAppSettings();
+
+                    break;
+                }
+            }
+        }
 
     }
 

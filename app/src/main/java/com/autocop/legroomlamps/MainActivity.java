@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -359,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         colorBlue=findViewById(R.id.blue);
         colorGreen=findViewById(R.id.green);
         textStatus=findViewById(R.id.bt_status);
+        imageCar=findViewById(R.id.imageCar);
         this.colorGreen.setOnClickListener(this);
         this.colorAmber.setOnClickListener(this);
         this.colorBlue.setOnClickListener(this);
@@ -366,11 +368,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.colorWhite.setOnClickListener(this);
         this.allBTDevices = new ArrayList();
         this.listNames = new ArrayList();
-        this.arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, this.listNames) {
+        this.arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, this.listNames) {
             @NonNull
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                ((TextView) view.findViewById(android.R.id.text1)).setTextColor(R.color.black);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                text1.setTextColor(Color.WHITE);
                 return view;
             }
         };
@@ -734,7 +737,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showDevicesList() {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
         builderSingle.setIcon((int) R.drawable.ic_launcher);
         builderSingle.setTitle((CharSequence) getResources().getString(R.string.select_bt));
         builderSingle.setCancelable(false);
