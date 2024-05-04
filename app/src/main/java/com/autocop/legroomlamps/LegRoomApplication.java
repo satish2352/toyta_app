@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 public class LegRoomApplication extends Application {
     public void onCreate() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(new CustomUncaughtExceptionHandler());
     }

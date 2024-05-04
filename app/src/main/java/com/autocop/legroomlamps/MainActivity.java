@@ -1,5 +1,6 @@
 package com.autocop.legroomlamps;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -11,12 +12,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuInflater;
@@ -339,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.sharedPreferences = getSharedPreferences(SplashActivity.PREF_NAME, 0);
         this.editor = this.sharedPreferences.edit();
         if (this.mBluetoothAdapter == null) {
-            Toast.makeText(this, getResources().getString(R.string.no_bluetooth), 1).show();
+            Toast.makeText(this, getResources().getString(R.string.no_bluetooth), Toast.LENGTH_LONG).show();
             finish();
         }
         this.menuBuilder = new MenuBuilder(this);
@@ -359,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         colorBlue=findViewById(R.id.blue);
         colorGreen=findViewById(R.id.green);
         textStatus=findViewById(R.id.bt_status);
+        imageCar=findViewById(R.id.imageCar);
         this.colorGreen.setOnClickListener(this);
         this.colorAmber.setOnClickListener(this);
         this.colorBlue.setOnClickListener(this);
@@ -366,11 +368,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.colorWhite.setOnClickListener(this);
         this.allBTDevices = new ArrayList();
         this.listNames = new ArrayList();
-        this.arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, this.listNames) {
+        this.arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, this.listNames) {
             @NonNull
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                ((TextView) view.findViewById(android.R.id.text1)).setTextColor(R.color.black);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                text1.setTextColor(Color.WHITE);
                 return view;
             }
         };
@@ -407,6 +410,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (savedInstanceState != null) {
             this.powerStatus = savedInstanceState.getBoolean(POWER_STATUS);
         }
+//        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(receiver, filter);
+//        this.mBluetoothAdapter.startDiscovery();
+//        searchDevices();
+
     }
 
     /* access modifiers changed from: protected */
@@ -515,20 +523,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         if (this.mBluetoothAdapter != null) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                int REQUEST_BLUETOOTH_PERMISSION_CONNECT=101;
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{android.Manifest.permission.BLUETOOTH_CONNECT},
-                        REQUEST_BLUETOOTH_PERMISSION_CONNECT);
-            } else {
-                // Permission has not been granted yet, and the user has selected "Don't ask again"
-                // Prompt the user to open the app settings and grant the permission manually
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivity(intent);
 
-
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                //return;
             }
             this.mBluetoothAdapter.disable();
         }
@@ -633,26 +635,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupReceiver() {
+        Log.d("mytag","setupReceiver ");
         this.mReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
+                Log.d("mytag","onReceive ");
                 String action = intent.getAction();
                 if ("android.bluetooth.device.action.FOUND".equals(action)) {
-                    BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra("android.bluetooth.device.extra.DEVICE");
+                    BluetoothDevice device;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
+                    }else{
+                        device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    }
+                    // BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra("android.bluetooth.device.extra.DEVICE");
                     if (!MainActivity.this.isDeviceExist(device)) {
-                        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                            int REQUEST_BLUETOOTH_PERMISSION_CONNECT=101;
-                            ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{android.Manifest.permission.BLUETOOTH_CONNECT},
-                                    REQUEST_BLUETOOTH_PERMISSION_CONNECT);
-                        } else {
-                            // Permission has not been granted yet, and the user has selected "Don't ask again"
-                            // Prompt the user to open the app settings and grant the permission manually
-                            Intent intent1 = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivity(intent);
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
 
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            //return;
                         }
                         if (device.getName() != null) {
                             MainActivity.this.arrayAdapter.add(device.getName() + "\n" + device.getAddress());
@@ -662,32 +667,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         MainActivity.this.allBTDevices.add(device);
                     }
                     MainActivity.this.arrayAdapter.notifyDataSetChanged();
+                    Log.d("mytag","onReceive FOUND");
+
                 } else if ("android.bluetooth.adapter.action.DISCOVERY_FINISHED".equals(action)) {
+                    Log.d("mytag","DISCOVERY_FINISHED ");
                     if (MainActivity.this.allBTDevices.size() <= 0 && MainActivity.this.listDevices != null && MainActivity.this.listDevices.isShowing()) {
                         MainActivity.this.listDevices.setMessage(MainActivity.this.getResources().getString(R.string.no_device));
                     }
                 } else if ("android.bluetooth.device.action.BOND_STATE_CHANGED".equals(action)) {
-                    BluetoothDevice device2 = (BluetoothDevice) intent.getParcelableExtra("android.bluetooth.device.extra.DEVICE");
-                    if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        int REQUEST_BLUETOOTH_PERMISSION_CONNECT=101;
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{android.Manifest.permission.BLUETOOTH_CONNECT},
-                                REQUEST_BLUETOOTH_PERMISSION_CONNECT);
-                    } else {
-                        // Permission has not been granted yet, and the user has selected "Don't ask again"
-                        // Prompt the user to open the app settings and grant the permission manually
-                        Intent intent1 = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
 
+                    Log.d("mytag","BOND_STATE_CHANGED ");
+
+                    BluetoothDevice device2 = (BluetoothDevice) intent.getParcelableExtra("android.bluetooth.device.extra.DEVICE");
+                    if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        //return;
                     }
                     if (device2.getBondState() == 12) {
                         MainActivity.this.mChatService.connect(device2);
                     }
                 } else {
                     if ("android.bluetooth.device.action.ACL_DISCONNECTED".equals(action) || "android.bluetooth.device.action.ACL_CONNECTED".equals(action)) {
+                        Log.d("mytag","ACL_DISCONNECTED ");
+
                     }
                 }
             }
@@ -696,7 +704,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         filter.addAction("android.bluetooth.adapter.action.DISCOVERY_FINISHED");
         filter.addAction("android.bluetooth.device.action.BOND_STATE_CHANGED");
         filter.addAction("android.bluetooth.device.action.ACL_DISCONNECTED");
-        registerReceiver(this.mReceiver, filter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(this.mReceiver, filter,RECEIVER_EXPORTED);
+        }else{
+            registerReceiver(this.mReceiver, filter);
+        }
+
         searchDevices();
     }
 
@@ -723,23 +737,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showDevicesList() {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this,R.style.AlertDialogCustom);
         builderSingle.setIcon((int) R.drawable.ic_launcher);
         builderSingle.setTitle((CharSequence) getResources().getString(R.string.select_bt));
         builderSingle.setCancelable(false);
         builderSingle.setPositiveButton((CharSequence) getResources().getString(R.string.refresh), (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                    int REQUEST_BLUETOOTH_PERMISSION_CONNECT=101;
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{android.Manifest.permission.BLUETOOTH_CONNECT},
-                            REQUEST_BLUETOOTH_PERMISSION_CONNECT);
-                } else {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
+
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    //return;
                 }
                 if (MainActivity.this.mBluetoothAdapter.isDiscovering()) {
                     MainActivity.this.mBluetoothAdapter.cancelDiscovery();
@@ -758,19 +770,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 BluetoothDevice device = (BluetoothDevice) MainActivity.this.allBTDevices.get(selected);
                 ProgressDialog unused = MainActivity.this.progressDialog = new ProgressDialog(MainActivity.this);
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    int REQUEST_BLUETOOTH_PERMISSION_CONNECT=101;
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{android.Manifest.permission.BLUETOOTH_CONNECT},
-                            REQUEST_BLUETOOTH_PERMISSION_CONNECT);
-                } else {
-                    // Permission has not been granted yet, and the user has selected "Don't ask again"
-                    // Prompt the user to open the app settings and grant the permission manually
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
 
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    //return;
                 }
                 if (device.getName() != null) {
                     MainActivity.this.progressDialog.setMessage(MainActivity.this.getResources().getString(R.string.get_connect) + " " + device.getName());
@@ -788,20 +795,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.arrayAdapter.clear();
         this.allBTDevices.clear();
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            int REQUEST_BLUETOOTH_PERMISSION_CONNECT=101;
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{android.Manifest.permission.BLUETOOTH_CONNECT},
-                    REQUEST_BLUETOOTH_PERMISSION_CONNECT);
-        } else {
-            // Permission has not been granted yet, and the user has selected "Don't ask again"
-            // Prompt the user to open the app settings and grant the permission manually
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            Uri uri = Uri.fromParts("package", getPackageName(), null);
-            intent.setData(uri);
-            startActivity(intent);
 
-
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            //
         }
         for (BluetoothDevice d : this.mBluetoothAdapter.getBondedDevices()) {
             this.arrayAdapter.add(d.getName() + "\n" + d.getAddress());
