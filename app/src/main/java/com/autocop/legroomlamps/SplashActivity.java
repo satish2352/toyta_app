@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -159,11 +160,21 @@ public class SplashActivity extends AppCompatActivity {
         if(grantResults.length>0)
         {
             if (requestCode == 51 && grantResults[0] == 0) {
+                Log.d("mytag","51");
                 onResume();
             } else if (requestCode == 52 && grantResults[0] == 0) {
+                Log.d("mytag","52");
                 onResume();
-            } else {
+            } else if(requestCode == 1000 && grantResults[0] == 0) {
                 //finish();
+                Log.d("mytag","1000");
+                onResume();
+            }
+            else if(requestCode == 1001 && grantResults[0] == 0) {
+                //finish();
+                Log.d("mytag","1001");
+                onResume();
+
             }
         }
         for (int i = 0; i < grantResults.length; i++) {
