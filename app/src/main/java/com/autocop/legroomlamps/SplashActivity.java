@@ -11,6 +11,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -47,6 +50,8 @@ public class SplashActivity extends AppCompatActivity {
         prefEditor.putInt(SDK_VERSION, Build.VERSION.SDK_INT);
         prefEditor.putBoolean(ITS_LOLLIPOP, false);
         prefEditor.commit();
+
+
     }
 
     /* access modifiers changed from: protected */

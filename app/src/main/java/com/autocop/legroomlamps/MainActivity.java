@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onBackPressed() {
-        new AlertDialog.Builder(this).setTitle((CharSequence) "Exit").setMessage((CharSequence) "Exit App?").setPositiveButton((CharSequence) "Exit", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle((CharSequence) "Exit App").setMessage((CharSequence) "Are you sure you want to exit app?").setPositiveButton((CharSequence) "Exit", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 MainActivity.this.finish();
