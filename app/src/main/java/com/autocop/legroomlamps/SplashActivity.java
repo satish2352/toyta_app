@@ -57,7 +57,9 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                SplashActivity.this.startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                SplashActivity.this.startActivity(intent);
                 SplashActivity.this.finish();
             }
         };
@@ -81,7 +83,36 @@ public class SplashActivity extends AppCompatActivity {
             }else
             {
                 this.countDownTimer.start();
+                Log.d("mytag","Else 1");
+                Log.d("mytag","IF 1");
             }
+        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+
+
+
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 51);
+            }else
+            {
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) !=
+//                        PackageManager.PERMISSION_GRANTED) {
+//                    // Location permission not granted, request it
+//                    ActivityCompat.requestPermissions(this,
+//                            new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+//                            500);
+//                    Log.d("mytag","IF 2");
+//                } else {
+//                    // Location permission granted, proceed with your functionality
+//                    // Access background location as needed
+//                    this.countDownTimer.start();
+//
+//                    Log.d("mytag","Else 2");
+//                }
+                this.countDownTimer.start();
+            }
+
         }
         else{
             if (ActivityCompat.checkSelfPermission(this, "android.permission.BLUETOOTH") != 0 ) {
@@ -91,36 +122,10 @@ public class SplashActivity extends AppCompatActivity {
             }else
             {
                 this.countDownTimer.start();
+
+                Log.d("mytag","Else 3");
             }
         }
-
-
-
-
-//        String[] permissions = new String[]{android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.BLUETOOTH_ADMIN,Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH};
-//
-//// Initialize a list to hold permissions that need to be requested
-//        ArrayList<String> permissionsToRequest = new ArrayList<>();
-//
-//// Check each permission
-//        for (String permission : permissions) {
-//            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-//                // Permission not granted, add it to the list of permissions to request
-//                permissionsToRequest.add(permission);
-//            }
-//        }
-//        // Check if there are permissions to request
-//        if (!permissionsToRequest.isEmpty()) {
-//            // Convert the list to an array
-//            String[] permissionsArray = permissionsToRequest.toArray(new String[0]);
-//
-//            // Request permissions
-//            ActivityCompat.requestPermissions(this, permissionsArray, 100);
-//        } else {
-//            // All permissions are already granted, start your countdown timer or any other operation
-//            this.countDownTimer.start();
-//        }
-
     }
 
     private void setLanguageLocale() {
@@ -171,6 +176,12 @@ public class SplashActivity extends AppCompatActivity {
                 onResume();
             }
             else if(requestCode == 1001 && grantResults[0] == 0) {
+                //finish();
+                Log.d("mytag","1001");
+                onResume();
+
+            }
+            else if(requestCode == 500 && grantResults[0] == 0) {
                 //finish();
                 Log.d("mytag","1001");
                 onResume();
@@ -229,6 +240,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private void redirectToAppSettings() {
         // Redirect to app settings...
+
+        Log.d("mytag","redirectToAppSettings");
 
         AlertDialog.Builder builder=new AlertDialog.Builder(SplashActivity.this)
                 .setTitle("Allow All Permissions Manually")

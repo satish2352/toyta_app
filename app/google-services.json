@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "571127221441",
+    "project_id": "legroomlamps",
+    "storage_bucket": "legroomlamps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571127221441:android:5eca2fb3c3f938419dd840",
+        "android_client_info": {
+          "package_name": "com.autocop.legroomlamps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwO2i7KMs2DQbk-NS5Eow_s-ZLhqLFSak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
