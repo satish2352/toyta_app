@@ -12,7 +12,7 @@ android {
         applicationId = "com.autocop.legroomlamps"
         minSdk = 22
         targetSdk = 34
-        versionCode = 4
+        versionCode = 5
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
