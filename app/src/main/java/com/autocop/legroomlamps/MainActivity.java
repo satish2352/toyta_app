@@ -480,6 +480,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             MainActivity.this.startActivityForResult(new Intent("android.bluetooth.adapter.action.REQUEST_ENABLE"), 22);
                             break;
                         }
+
+                    case R.id.privacy_policy:
+                    {
+
+                        Intent intent = new Intent(MainActivity.this,PrivacyPolicyActivity.class);
+                        startActivity(intent);
+
+                        break;
+                    }
+
                 }
                 return true;
             }

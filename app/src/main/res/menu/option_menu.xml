@@ -10,6 +10,10 @@
         android:icon="@drawable/power_off"
         android:title="@string/power_off" />
     <item
+        android:id="@+id/privacy_policy"
+        android:icon="@drawable/policy_24px"
+        android:title="@string/privacy_policy" />
+    <item
         android:id="@+id/helpme"
         android:icon="@android:drawable/ic_menu_help"
         android:title="@string/helpme" />
