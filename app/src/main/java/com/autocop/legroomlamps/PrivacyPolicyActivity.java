@@ -37,7 +37,6 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
         webView.getSettings().setSupportZoom(true);
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new MyWebViewClient());
-        webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setBuiltInZoomControls(true);
@@ -54,7 +53,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        webView.loadUrl("https://www.autocoptrackpro.com/privacytermsambientlight.aspx");
+        webView.loadUrl("https://autocoptrackpro.com/privacy-policy-for-leg-room-lamp.html");
 
     }
 
